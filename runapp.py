@@ -5,7 +5,9 @@ default: run app
 `clear`: clear the url server and content server
 """
 
+import os
 import sys
+import traceback
 from webspider.core.spider import spider
 
 USAGE = """
@@ -91,6 +93,8 @@ def reset_url_is_fetched():
 
 def create_cookie():
     # create cookie directory in app path
+    import cookielib
+    from webspider.core.opener import BuildinOpener
     cookie_dir = os.path.join(app_dir, "cookie")
     try:
         os.mkdir(cookie_dir)
@@ -98,20 +102,23 @@ def create_cookie():
         pass
     print("Automatically Generate Cookie in Directory: {0}".format(cookie_dir))
     url = raw_input("From url: ")
-    cookie_cnt = int(row_input("Count: "))
+    cookie_cnt = int(raw_input("Count: "))
     ok_n = 0
     not_ok_n = 0
     for i in xrange(cookie_cnt):
         cookie_filename = "{0}.cj".format(i+1)
         cookie_filename = os.path.join(cookie_dir, cookie_filename)
+        print("COOKIE creating : {0}".format(cookie_filename))
         try:
-            opener = BuildinOpener(cookie_filename=cookie_filename)
-            opener.open(url)
+            cj = cookielib.LWPCookieJar(cookie_filename)
+            opener = BuildinOpener()
+            opener.open(url, cookie=cj)
+            cj.save(ignore_discard=True, ignore_expires=True)
             ok_n +=1
         except Exception, ex:
             traceback.print_exc()
             not_ok_n += 1
-            print("COOKIE creating Failed: {0}".format(cookie_filename))
+            print("Failed..")
     print("Plan: {0}, Success: {1}, Fail: {2}".format(cookie_cnt, ok_n, not_ok_n))
 
 def test_parse():
