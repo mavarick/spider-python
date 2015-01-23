@@ -1,0 +1,14 @@
+# selenium wrapper for analysis specified page
+===============================
+introduction:
+    selenium is one super advanced site tester tool, which simulate the real
+    browser core, so it could provide many advanced functions for analyzing 
+    pages, for example:
+    1, capture the screenshot of the page
+
+===============================
+requirements:
+1, selenium rc: selenium remote control server
+    download from : https://code.google.com/p/selenium/downloads/list?can=1&q=&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount
+2, python api for selenium
+
