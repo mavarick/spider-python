@@ -29,7 +29,7 @@ class SeleniumServer(object):
 
     def open(self, url, para = ''):
         '''
-        para should be the added parammeters to url
+        @params: should be the added parammeters to url
         '''
         self.sel = selenium(self.host, self.port, self.browser, url)
 
@@ -71,5 +71,5 @@ def test():
         to_path = "/Users/apple/Documents/projects/webspider/webspider/tools/sceernshot/qq.png", 
         params = '')
 
-test()
+#test()
         

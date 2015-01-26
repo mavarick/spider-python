@@ -7,9 +7,13 @@ import cookielib
 import gzip
 import os
 import StringIO
+import urlparse
+import copy
 
 import requests
 
+# module
+selenium = None
 
 def getUrlOpener(type, **args):
     """ return correspont `opener` according to `type`
@@ -18,10 +22,20 @@ def getUrlOpener(type, **args):
     @args: `cookie_filename`: cookie file name
             `timeout`: timeout, only valid to 'buildin' and 'requests'
     """
+    sel = None
+    if type == 'selenium':
+        try:
+            from selenium import selenium as sel
+        except:
+            print("Error: Module `Selenium` is not installed")
+            raise
+    global selenium
+    selenium = sel
     return {
             "buildin": BuildinOpener,
             "requests": RequestsOpener,
-            "mechanize": MechanizeOpener
+            "mechanize": MechanizeOpener,
+            "selenium": SeleniumOpener
         }.get(type, BuildinOpener)(**args)
 
 class Opener(object):
@@ -122,6 +136,88 @@ class MechanizeOpener(Opener):
         if resp is not None:
             resp.close()
         self.browser.clear_history()
+
+class SeleniumOpener(Opener):
+    def __init__(self, host="127.0.0.1", port=4444, browser='firefox', timeout=30000):
+        '''
+        @params:
+        host/port: SHOULD be localhost running selenium-rc server's configuration
+        @example:
+            host: "localhost"
+            port: 4444
+            browser:"firefox"
+        '''
+        self.host = host
+        self.port = port
+        self.browser = browser
+        self.timeout = timeout
+
+    def __open(self, url, para = ''):
+        '''
+        @params: should be the added parammeters to url
+
+        selenium handles url differently: 
+            for: <scheme>://<netloc>/<path>?<query>#<fragment>
+            base part `<scheme>://<netloc>` should be firstly set and
+            relative part `/<path>?<query>#<fragment>` should be set when open it
+        '''
+        url_info = URLInfo(url)
+        domain = url_info.get_domain()
+        path = url_info.get_path()
+
+        self.sel = selenium(self.host, self.port, self.browser, domain)
+
+        self.sel.start()
+        self.sel.set_timeout(self.timeout)
+
+        self.sel.open(path) #could raise timeout exception!
+
+    def open(self, url, para=''):
+        self.__open(url, para = para)
+        return self.sel.get_html_source()
+
+    def capture_entire_screenshot(self, url, url_params, to_path, params):
+        ''' 
+        @params:
+            url/url_params: the screenshot url
+            to_path : the save path of the screenshot
+            params  : the added parameters for screenshot, for example: "background=#666666"
+        '''
+        self.__open(url, url_params)
+        self.sel.capture_entire_page_screenshot(to_path, params)
+
+    def stop(self):
+        ''' you must stop the server after you shutdown it, for the
+        opened record browser will be there all time!
+        '''
+        self.sel.stop()
+
+    def close(self):
+        ''' simulate the 'close' button is clicked on the browser page
+        '''
+        self.sel.close()
+
+    def reset(self):
+        self.sel.close()  # close the page
+        self.sel.stop()   # close the server
+
+    def __del__(self):
+        self.reset()
+
+class URLInfo(object):
+    def __init__(self, url):
+        self.url_info = urlparse.urlsplit(url) 
+        # return tuple: (scheme, netloc, path, query, fragment)
+    def get_domain(self):
+        schema = self.url_info[0]
+        netloc = self.url_info[1]
+        return urlparse.urlunsplit((schema, netloc, "", "", ""))
+    def get_path(self):
+        path = self.url_info[2]
+        query = self.url_info[3]
+        fragment = self.url_info[4]
+        return urlparse.urlunsplit(("", "", path, query, fragment))
+
 
 if __name__ == "__main__":
     #mb = MechanizeOpener()
