@@ -54,4 +54,4 @@ def test():
     url_info = get_rating(url)
     for k, v in url_info.iteritems():
         print(u"{0} : {1}".format(k, v))
-test()
+#test()
