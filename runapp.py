@@ -123,6 +123,10 @@ def create_cookie():
 
 def test_parse():
     from webspider.core.opener import getUrlOpener
+    from webspider.proxy.proxyServer import getProxyServer
+    from webspider.agent.agentServer import getAgentServer
+    from webspider.cookie.cookieServer import cookieServer
+
     try:
       url = sys.argv[3]
     except:
@@ -135,7 +139,38 @@ def test_parse():
     opener = getUrlOpener("mechanize")
     print("Test Url: {0}".format(url))
     print("Open Url")
-    content = opener.open(url)
+
+    base_dir = os.getcwd()
+    app_dir = os.path.join(base_dir, "webspider", "apps", appname)
+    sys.path.append(app_dir)
+    Params = __import__("Params")
+
+    if Params.USE_PROXY_INFO["is_used"]:
+      proxy_type = Params.USE_PROXY_INFO["type"]
+      proxyServer = getProxyServer(appname,
+                                        proxy_type,
+                                        Params.USE_PROXY_INFO)
+    agentServer = None
+    if Params.USE_AGENT_INFO["is_used"]:
+      agent_type = Params.USE_AGENT_INFO["type"]
+      agentServer = getAgentServer(appname,
+                                        agent_type,
+                                        Params.USE_AGENT_INFO)
+    cookieServer = None
+    if Params.USE_COOKIE_INFO["is_used"]:
+      cookieServer = cookieServer(appname, Params.USE_COOKIE_INFO)
+
+    proxy_item = proxyServer.get() if proxyServer else None
+    proxy = proxy_item[1] if proxy_item else ""
+    # agent
+    agent_dic = agentServer.get() if agentServer else None
+    # cookie
+    cookie = cookieServer.get_cookie() if cookieServer else None
+
+    content = opener.open(url, agent_dic = agent_dic,
+                            proxy = proxy,
+                            cookie = cookie)
+
     if not content:
         raise Exception, "No opening Responce, Please Check"
     # get relevant function to parse the url content

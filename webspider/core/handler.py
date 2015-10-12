@@ -90,7 +90,7 @@ class UrlHandler(object):
     # cookie
     cookie = self.cookieServer.get_cookie() if self.cookieServer else None
     
-    return self.opener.open(url, agent_dic = agent_dic, \
+    return self.opener.open(url, agent_dic = agent_dic,
                             proxy = proxy,
                             cookie = cookie)
 
