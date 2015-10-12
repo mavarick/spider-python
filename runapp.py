@@ -156,9 +156,10 @@ def test_parse():
       agentServer = getAgentServer(appname,
                                         agent_type,
                                         Params.USE_AGENT_INFO)
-    cookieServer = None
     if Params.USE_COOKIE_INFO["is_used"]:
       cookieServer = cookieServer(appname, Params.USE_COOKIE_INFO)
+    else:
+      cookieServer = None
 
     proxy_item = proxyServer.get() if proxyServer else None
     proxy = proxy_item[1] if proxy_item else ""
