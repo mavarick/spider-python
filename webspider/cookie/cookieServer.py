@@ -34,7 +34,7 @@ class cookieServer(object):
       cs.load(app_name, cookie_paths, start, end, method)
       cs.get_cookie()
     """
-    self.appname = appname
+    self.appname = app_name
     self.cookie_path = cookie_info["path"]
     self.cookie_start = cookie_info["start"]
     self.cookie_end   = cookie_info["end"]

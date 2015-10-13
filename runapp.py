@@ -7,6 +7,7 @@ default: run app
 
 import os
 import sys
+import pdb
 import traceback
 from webspider.core.spider import spider
 
@@ -145,6 +146,7 @@ def test_parse():
     sys.path.append(app_dir)
     Params = __import__("Params")
 
+    proxyServer = None
     if Params.USE_PROXY_INFO["is_used"]:
       proxy_type = Params.USE_PROXY_INFO["type"]
       proxyServer = getProxyServer(appname,
@@ -162,21 +164,19 @@ def test_parse():
       cookieServer = None
 
     proxy_item = proxyServer.get() if proxyServer else None
-    proxy = proxy_item[1] if proxy_item else ""
+    proxy = proxy_item[1] if proxy_item else None
     # agent
     agent_dic = agentServer.get() if agentServer else None
     # cookie
     cookie = cookieServer.get_cookie() if cookieServer else None
-
     content = opener.open(url, agent_dic = agent_dic,
                             proxy = proxy,
                             cookie = cookie)
-
     if not content:
         raise Exception, "No opening Responce, Please Check"
     # get relevant function to parse the url content
     print("Parse Url")
-    content = Parse.parse(url, content, print_info =True)
+    content = Parse.parse(url, content, print_info=True)
     print("Content:")
     print(content)
 

@@ -109,7 +109,7 @@ class RequestsOpener(Opener):
         return r.text
 
 class MechanizeOpener(Opener):
-    def __init__(self, cookie_filename=None):
+    def __init__(self, cookie_filename=None, cookie=None):
         try:
             import mechanize
         except ImportError:
@@ -118,6 +118,8 @@ class MechanizeOpener(Opener):
         self.cj = cookielib.LWPCookieJar()
         if cookie_filename is not None:
             self.cj.load(cookie_filename)
+        if cookie is not None:
+            self.cj = cookie
         self.browser.set_cookiejar(self.cj)
         self.browser.set_handle_equiv(True)
         self.browser.set_handle_gzip(True)
@@ -125,7 +127,9 @@ class MechanizeOpener(Opener):
         self.browser.set_handle_referer(True)
         self.browser.set_handle_robots(False)
 
-    def open(self, url, agent_dic=None, proxy = None, data=None):
+    def open(self, url, agent_dic=None, proxy = None, data=None, cookie=None):
+        if cookie:
+            self.browser.set_cookiejar(self.cj)
         if agent_dic:
             self.browser.addheaders = agent_dic.items()
         if proxy:

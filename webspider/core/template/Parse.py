@@ -11,10 +11,7 @@ import re
 import json
 import sys
 
-try:
-    from BeautifulSoup import BeautifulSoup as BS
-except:
-		from bs4 import BeautifulSoup as BS
+from bs4 import BeautifulSoup as BS
 
 from webspider.exception.SpiderException import NoDataException
 
