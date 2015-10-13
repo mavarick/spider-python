@@ -57,7 +57,7 @@ class UrlHandler(object):
     # Website return error_page
     self.checkErrorPage(page)
     # get links to be inserted into Mysql
-    links = self.getValidUrls(page)
+    links = self.getValidUrls(url, page)
     # get needed content
     content, content_flag_dic = self.getContent(url, page)
     # extend the links
@@ -75,6 +75,10 @@ class UrlHandler(object):
   def extend_content(self, url, content, content_flag_dic):
     return self.Tools.extend_content(url, content, content_flag_dic)
 
+  # deprecated
+  def filter_links(self, url, links):
+      return self.Tools.filter_links(url, links)
+
   def getBasePath(self, url):
     """ get url domain
     """
@@ -84,7 +88,7 @@ class UrlHandler(object):
   def openUrl(self, url):
     # proxy_id, proxy, connect_time
     proxy_item = self.proxyServer.get() if self.proxyServer else None
-    proxy = proxy_item[1] if proxy_item else ""
+    proxy = proxy_item[1] if proxy_item else None
     # agent
     agent_dic = self.agentServer.get() if self.agentServer else None
     # cookie
@@ -100,7 +104,7 @@ class UrlHandler(object):
         raise PageErrorException, \
             "ERROR: error page, Page contains '{0}'".format(re_item)
 
-  def getValidUrls(self, page):
+  def getValidUrls(self, url, page):
     """ get valid links
     """
     links = getLinks(page) 
@@ -128,6 +132,7 @@ class UrlHandler(object):
         if re.search(pattern, link):
           result.append(link)
           break
+      result = self.filter_links(url, links)
     return result
 
   def trim_url_params(self, link):

@@ -96,7 +96,7 @@ ERROR_PAGES = ["页面访问错误",
 # regulations will demilish the number of url to be inserted into mysql, so here
 # should be racked the brain carefully!
 RE_VALID_URL = [
-        (r"http://www.36kr.com/q/"),
+        (r"http://www.36kr.com/"),
     ]
 RE_INVALID_URL = [
         #(r"")

@@ -162,7 +162,7 @@ def check_cookie(use_cookie_info):
                 print("[ERROR] cookie path [{0}] doesn't exist".format(cookie_dir))
             else:
                 print "Cookie directory[%s] already exists" % cookie_dir
-                files = os.path.listdir(cookie_dir)
+                files = os.listdir(cookie_dir)
                 print "Cookie Files: %s" % files
         except:
             raise

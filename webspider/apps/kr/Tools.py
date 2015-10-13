@@ -56,3 +56,21 @@ def extend_content(url, content, flag_dict):
                      var2str.var2str(tag_dict), content_str))
   return _content
 
+
+''' for links extracted from page
+some filter and analyzer should be made to expanded the result
+'''
+# deprecated
+# which could be done in extend_links
+def filter_links(url, links):
+    '''
+    Parameters 
+      :: links :: url set, with netloc etc
+      :: url :: the url parsed to get links
+    '''
+    for url in links:
+        if 'html/' in url:
+            url = url.split('html/')[0] + 'html'
+        result.add(url)
+    return links
+

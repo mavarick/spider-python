@@ -43,7 +43,7 @@ def getContentDefault(page, url):
 #    ....
 
 def parse_content(page, url):
-    bs = BS(page)
+    bs = BS(page, "html5lib")
     try:
         article = bs.find("article", attrs={"class": "single-post"})
         if not article: return None

@@ -53,7 +53,9 @@ class BuildinOpener(Opener):
         self.timeout = timeout
         socket.setdefaulttimeout(timeout)
 
-    def open(self, url, agent_dic=None, proxy=None, cookie = None, data = {}):
+    def open(self, url, agent_dic=None, proxy=None, cookie=None, cookie_file=None, data = {}):
+        if cookie_file:
+            cookie = cookielib.FileCookieJar(cookie)
         # proxy
         proxy_support = (urllib2.ProxyHandler() if (not proxy) else
                          urllib2.ProxyHandler({'http':
@@ -87,7 +89,7 @@ class RequestsOpener(Opener):
         self.cookie_file = cookie_filename
         self.cookie_exist_flag = 0
 
-    def open(self, url, agent_dic=None, proxy=None, cookie = None, **kargs):
+    def open(self, url, agent_dic=None, proxy=None, cookie=None, cookie_file=None, **kargs):
         # agent_dic
         headers = {}
         if agent_dic:
@@ -95,6 +97,8 @@ class RequestsOpener(Opener):
         if proxy:
             proxy = {"http": "http://%s"%proxy if not proxy.startswith("http://") else proxy}
         if cookie:
+            cookie = cookie
+        if cookie_file:
             cookie = cookielib.FileCookieJar(cookie)
         params = kargs.get("params", None)
         data   = kargs.get("data", None)
@@ -127,9 +131,12 @@ class MechanizeOpener(Opener):
         self.browser.set_handle_referer(True)
         self.browser.set_handle_robots(False)
 
-    def open(self, url, agent_dic=None, proxy = None, data=None, cookie=None):
+    def open(self, url, agent_dic=None, proxy = None, data=None, cookie=None, cookie_file=None):
         if cookie:
-            self.browser.set_cookiejar(self.cj)
+            self.browser.set_cookiejar(cookie)
+        if cookie_file:
+            cookie = cookielib.FileCookieJar(cookie)
+            self.browser.set_cookiejar(cookie)
         if agent_dic:
             self.browser.addheaders = agent_dic.items()
         if proxy:
