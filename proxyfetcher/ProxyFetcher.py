@@ -110,15 +110,15 @@ class kuaidaili_server(ProxyBaseFetcher):
                 tds = node.findAll("td")
                 items = [t.text for t in tds]
                 ip, port , _class, http_https, get_post, addrs_channel, resp_time, _web_check = items
-                http_set = filter(lambda x: x, [t.strip().lower() for t in http_https.split(',')])
+                http_set = filter(lambda x: x, [t.strip().lower() for t in http_https.split(',', 2)])
                 is_http = 1 if 'http' in http_set else 0
                 is_https = 1 if 'https' in http_set else 0
 
-                methods = filter(lambda x: x, [t.strip().lower() for t in get_post.split(',')])
+                methods = filter(lambda x: x, [t.strip().lower() for t in get_post.split(',', 2)])
                 sup_get = 1 if 'get' in methods else 0
                 sup_post = 1 if 'post' in methods else 0
 
-                addrs_channel = filter(lambda x: x, [t.strip().lower() for t in addrs_channel.split(',')])
+                addrs_channel = filter(lambda x: x, [t.strip().lower() for t in addrs_channel.split(' ', 2)])
                 if len(addrs_channel) > 1:
                     addrs, channel = addrs_channel[0], addrs_channel[1]
                 elif len(addrs_channel) == 1:
