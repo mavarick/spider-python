@@ -21,6 +21,7 @@ class MysqlApi(object):
     def get_cursor(self):
         if not self.cursor:
             self.cursor = self.conn.cursor()
+        return self.cursor
 
     def execute(self, sql):
         '执行Mysql Sql语句'
@@ -89,6 +90,7 @@ class MysqlApi(object):
         except Exception, ex:
             pass
         return flag
+
     def close(self):
         '''close the connection'''
         if self.cursor:
