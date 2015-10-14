@@ -30,6 +30,11 @@ is_available, is_deleted
 insert_time, last_changed_time
 
 主要抓取 http://www.kuaidaili.com/ 主页上面的一些稳定ip，并且作为一种服务实时监控
+
+TODO:
+  1, add cookie, agent information;
+  2, transform to server;
+  3, stability of server(try .. except ..)
 '''
 
 
